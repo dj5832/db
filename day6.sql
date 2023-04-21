@@ -150,9 +150,96 @@ SELECT SUM(sal)
   FROM emp 
  GROUP BY deptno
  HAVING SUM(sal) > 9000; 
- 
+
+-- 위의 쿼리를 HAVING 절 없이 작성
 SELECT *
+  FROM (SELECT deptno, SUM(sal) sal
+		  FROM emp 
+		 GROUP BY deptno) 
+ WHERE sal > 9000
+;
+
+--SELECT 쿼리 문법
+--SELECT 
+--FROM 
+--WHERE 
+--GROUP BY 
+--HAVING 
+--ORDER BY 
+--
+--GROUP BY 절에 행을 그룹핑 할 기준(컬럼)을 작성
+--ex : 부서번호"별"로 그룹을 만들경우
+--GROUP BY deptno 
+--
+--전체행을 기준으로 그룹핑을 하려면 GROUP BY 절에 어떤 컬럼을 기술해야 할까?
+--emp 테이블에 등록된 14명의 사원 전체의 급여 합계를 구하려면?  == > 결과는 1개의 행
+--==> GROUP BY 절을 기술하지 않는다.
+
+SELECT SUM(sal)
   FROM emp;
   
-SELECT *
-  FROM dept;
+GROUP BY 절에 기술한 컬럼을 SELECT 절에 기술하지 않는 경우?;
+SELECT SUM(sal)
+  FROM emp 
+ GROUP BY deptno; -- 결과가 출력이 된다.
+ 
+그룹함수의 제한사항
+부서번호별 가장 높은 급여를 받는 사람의 금여액
+이 사람이 누군지 알 수 없다(그룹함수의 한계); -- ==> (서브쿼리, 분석함수를 통해서 알 수 있음)
+SELECT deptno, MAX(sal)
+  FROM emp
+ GROUP BY deptno;
+
+
+GROUP 함수의 특징
+1. NULL 은 그룹함수 연산에서 제외가 된다.
+
+부서번호별 사원의 sal, comm 컬럼의 총 합을 구하기;
+SELECT deptno, SUM(sal + comm), SUM(sal + NVL(comm, 0))  
+  FROM emp 
+ GROUP BY deptno;
+
+NULL 처리의 효율;
+SELECT deptno, SUM(sal) + NVL(SUM(comm), 0),  
+			   SUM(sal) + SUM(NVL(comm, 0)) 
+  FROM emp 
+ GROUP BY deptno;
+ 
+2. GROUP BY 절에 작성된 컬럼 이외의 컬럼이 SELECT 절에 올 수 없다.
+	==> GROUP BY 절로 묶었는데 SELECT 로 다시 조회한다는 것은 논리적으로 맞지 않는다.;
+	
+-- 실습 1
+-- 직원중 가장 높은 급여
+-- 직원중 가장 낮은 급여
+-- 직원의 급여 평균(소수점 두자리까지 나오도록 반올림)
+-- 직원의 급여 합(null 제외)
+-- 직원중 상급자가 있는 직원의 수(null 제외)
+-- 전체 직원의 수
+SELECT MAX(sal), MIN(sal), ROUND(AVG(sal), 2) avg, SUM(sal), COUNT(sal), COUNT(mgr), COUNT(*)
+  FROM emp;
+  
+-- 실습 2
+-- 실습 1의 결과를 부서별로 조회 하세요.
+SELECT 
+	CASE
+		WHEN deptno = 10 THEN 'ACCOUNTING'
+		WHEN deptno = 20 THEN 'RESEARCH'
+		WHEN deptno = 30 THEN 'SALES'		
+	END dname ,MAX(sal), MIN(sal), ROUND(AVG(sal), 2) avg, SUM(sal), COUNT(sal), COUNT(mgr), COUNT(*)  
+  FROM emp
+ WHERE sal IS NOT NULL
+ GROUP BY deptno; 
+--실습 3
+SELECT TO_CHAR(hiredate, 'YYYYMM'), COUNT(hiredate) CNT 
+  FROM emp
+ WHERE hiredate IS NOT NULL 
+ GROUP BY TO_CHAR(hiredate, 'YYYYMM');
+
+-- 실습 4
+SELECT COUNT(*)
+  FROM (
+		SELECT deptno
+		  FROM emp
+		  WHERE deptno IS NOT NULL
+		 GROUP BY deptno)
+;
