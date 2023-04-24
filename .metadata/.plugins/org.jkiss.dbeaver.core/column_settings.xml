@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+	<item id="NodeList/OracleSchema">
+		<column name="Name" visible="true" order="0" width="155"/>
+	</item>
+</items>
