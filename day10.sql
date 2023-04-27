@@ -117,12 +117,6 @@ WHERE 절에서 서브쿼리 사용시 주의할 점
  
 SMITH , ALLEN
 
-select *
-  FROM emp
- WHERE deptno IN (select deptno
-			  	   FROM emp
-				 WHERE ename IN ('SMITH' ,'ALLEN'));
-
 -- 실습1
 select *
   FROM emp 
@@ -139,3 +133,75 @@ select *
    				WHERE a.deptno = b.deptno);
    				-- 위의 실습1번과 차이점 서브쿼리가 메인쿼리의 테이블을 참조하는 것인지 아닌지의 차이
    				-- 위의 예제가 상호연관 서브쿼리이다.
+   			
+ select *
+  FROM emp
+ WHERE deptno IN (select deptno
+			  	    FROM emp
+				   WHERE ename IN ('SMITH' ,'ALLEN'));
+NULL 과 IN, NULL 과 NOT IN 
+** IN, NOT IN 이용시 NULL 값의 존재 유무에 따라 원하지 않는 결과가 나올 수 있다.
+
+WHERE mgr IN (7902, NULL)
+==> mgr = 7902 OR mgr = NULL  -- null은 '=' 연산자 사용 불가능 is null 로 해야함 
+==> mgr 값이 7902 이거나 mgr 값이 null인 데이터
+
+SELECT *
+  FROM emp
+ WHERE mgr IN (7902, null);
+ 
+WHERE mgr NOT IN (7902, null)
+==> NOT (mgr = 7902 OR mgr = NULL)
+==> mgr != 7902 AND mgr != null 
+
+SELECT *
+  FROM emp
+ WHERE NOT (mgr = 7902 OR mgr = NULL);
+ 
+[pairwise, non-pairwise]
+한 행의 컬럼 값을 하나씩 비교하는 것 : non-pairwise
+한 행의 복수 컬럼을 비교하는 것 : pairwise(다중컬럼 서브쿼리 라고도 한다.)
+
+SELECT *
+  FROM emp
+ WHERE job IN ('MANAGER', 'CLERK'); -- non-pairwise
+ 
+SELECT *
+  FROM emp
+ WHERE (mgr, deptno) IN (SELECT mgr, deptno
+ 						   FROM emp
+ 						  WHERE empno IN (7499, 7782)); -- pairwise (쌍으로 조건이 생김 두가지의 조건을 성립하도록 함)
+ 						  
+SELECT *
+  FROM emp
+ WHERE mgr IN (SELECT mgr
+ 				 FROM emp
+ 				WHERE empno IN (7499, 7782))
+ 	AND deptno IN (SELECT deptno
+	 				 FROM emp
+ 					WHERE empno IN (7499, 7782)); -- (두개의 조건중 하나라도 맞으면 ok)
+
+-- 실습3
+INSERT INTO dept VALUES(99, 'dw', 'daejeon');
+
+select *
+  FROM dept
+ WHERE deptno NOT IN (SELECT deptno
+ 				   	    FROM emp
+ 				       WHERE deptno IS NOT NULL);
+ 
+select *
+  FROM product
+ WHERE pid NOT IN (SELECT pid
+ 			          FROM CYCLE
+ 			   		 WHERE cid = 1);
+ 			    
+select *
+  FROM "CYCLE"
+ WHERE pid in (SELECT pid
+ 				 FROM "CYCLE"
+ 				WHERE cid = 2)
+ 			AND cid = 1;
+ 				
+select *
+  FROM product;
