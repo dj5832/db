@@ -142,5 +142,7 @@ CUBE 의 경우 기술한 컬럼으로 모든 가능한 조합으로 서브그�
 가능한 서브구릅은 2^기술한 컬럼갯수
 기술한 컬럼이 3ㄱ만 넘어도 생성되는 서브그룹의 개수가 8개가 넘기 때문에 실제 필요하지 않은 서브그룹이
 포함될 가능성이 높다 ==> ROLLUP, GROUPING SETS 보다 활용성이 떨어진다.
+
 GROUP BY ROLLUP (job, deptno, mgr)
 GROUP BY CUBE   (job, deptmo, mgr)
+
