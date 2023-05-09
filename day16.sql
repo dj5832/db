@@ -92,19 +92,19 @@ SELECT to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1) dt
   FROM dual
  CONNECT BY LEVEL <= to_char(last_day(to_date(:yyyymm, 'YYYYMM')), 'DD');
 
- 
-SELECT to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'WW')
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 1 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) sun
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 2 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) mon
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 3 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) tue
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 4 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) wed
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 5 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) thu
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 6 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) fri
-		,decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 7 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1)) sat
+
+SELECT 
+		min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 1 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) sun
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 2 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) mon
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 3 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) tue
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 4 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) wed
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 5 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) thu
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 6 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) fri
+		,min(decode(to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'D'), 7 ,to_date(:yyyymm, 'YYYYMM') + (LEVEL - 1))) sat
   FROM dual  
-  GROUP BY  LEVEL ,to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'WW')
- CONNECT BY LEVEL <= to_char(last_day(to_date(:yyyymm, 'YYYYMM')), 'DD');
- 
+ CONNECT BY LEVEL <= to_char(last_day(to_date(:yyyymm, 'YYYYMM')), 'DD')
+ GROUP BY to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'WW')
+ORDER BY to_char(to_date(:yyyymm,'YYYYMM') + (LEVEL - 1), 'WW');
  
 select decode(deptno, 10 , sal) a,decode(deptno, 20 , sal) b ,decode(deptno, 30 , sal) c
   FROM emp;
