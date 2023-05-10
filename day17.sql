@@ -94,7 +94,8 @@ WHERE seq IN (2, 3);
 select *
   FROM board_test;
   
-SELECT seq, gn, parent_seq, lpad(' ', (LEVEL - 1)* 4) || title title
+SELECT seq, gn, CONNECT_BY_ROOT(seq) S_GN ,parent_seq, lpad(' ', (LEVEL - 1)* 4) || title title
   FROM board_test
- START WITH parent_seq = 4
- CONNECT BY PRIOR parent_seq = seq;
+ START WITH parent_seq IS NULL 
+ CONNECT BY PRIOR seq = parent_seq
+ ORDER BY gn DESC, seq;
