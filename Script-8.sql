@@ -1,0 +1,5 @@
+CREATE SEQUENCE pds_seq;
+DROP SEQUENCE pds_seq;
+CREATE SEQUENCE attach_seq;
+DROP SEQUENCE attach_seq;
+
